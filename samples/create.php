@@ -1,18 +1,18 @@
 <?php
-require_once ( dirname(__DIR__) . '/index.php' );
+require_once dirname(__DIR__) . '/config/base.php';
+
 use AnuDev\CurlHttpRequest\HttpRequest;
 
 // make a post request
 if ( $_SERVER['REQUEST_METHOD'] === 'POST' ) :
     // your post request body
-    $postdata = json_encode($_POST);
-    $req = new HttpRequest(HOST_API."endpoint/", "POST", $postdata, HEADERS);
+    $req = new HttpRequest(HOST_API."endpoint/", "POST", $_POST, HEADERS);
     try {
         $response = $req->post();
-        // check for errors
-        if( $req->errors ) throw new Exception($req->errors, 1);
-        // check for additional info
-        if( $req->info !== 201 ) throw new Exception("Error code: ". $req->info, 1);
+        // check for error
+        if( $req->error ) throw new Exception($req->error, 1);
+        // check for additional statusCode
+        if( $req->statusCode !== 201 ) throw new Exception("Error code: ". $req->statusCode, 1);
         // decode json object to php array 
         $results = json_decode($response, true);
         // $results['status'] === "Created" => $results['message'] // you could check api response here

@@ -1,16 +1,16 @@
 <?php
-require_once ( dirname(__DIR__) . '/index.php' );
+require_once dirname(__DIR__) . '/config/base.php';
+
 use AnuDev\CurlHttpRequest\HttpRequest;
 
 if ( $_SERVER['REQUEST_METHOD'] === 'DELETE' ) :
-    $postdata = json_encode(["id" => $_GET['id']]);
-    $req = new HttpRequest(HOST_API."endpoint/", "DELETE", $postdata, HEADERS);
+    $req = new HttpRequest(HOST_API."endpoint/", "DELETE", ["id" => $_GET['id']], HEADERS);
     try {
         $response = $req->delete();
-        // check for errors
-        if( $req->errors ) throw new Exception($req->errors, 1);
+        // check for error
+        if( $req->error ) throw new Exception($req->error, 1);
         // check for additional info
-        if( $req->info !== 200 ) throw new Exception("Error code: ". $req->info, 1);
+        if( $req->statusCode !== 200 ) throw new Exception("Error code: ". $req->statusCode, 1);
         // decode json object to php array 
         $results = json_decode($response, true);
         // $results['status'] === "Ok" => $results['message'] // you could check api response here
